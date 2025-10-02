@@ -1,0 +1,183 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-eo-teal: #0e869d;
+  --color-eo-bg: #c6f1f8;
+  --color-eo-sky: #79d3ff;
+  --color-eo-blue: #45bfd6;
+  --color-eo-dark: #0f5360;
+  --shadow-brand: 0 8px 24px rgba(14, 134, 157, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sub, system-ui, sans-serif);
+  background: linear-gradient(135deg, #ffffff 0%, #c6f1f8 100%);
+  color: var(--color-eo-dark);
+  min-height: 100vh;
+}
+
+/* Smooth scrolling for section anchors */
+section {
+  scroll-margin-top: 5rem;
+}
+
+/* Scroll margin for anchor divs (#top, #contact) */
+#top,
+#contact {
+  scroll-margin-top: 5rem;
+}
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(14, 134, 157, 0.15);
+}
+
+/* Button glow effect */
+.btn-glow {
+  box-shadow: 0 4px 20px rgba(14, 134, 157, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 6px 28px rgba(14, 134, 157, 0.45);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-eo-teal) 0%, var(--color-eo-blue) 50%, var(--color-eo-sky) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hero carousel navigation buttons */
+.hero-nav {
+  @apply absolute top-1/2 -translate-y-1/2 rounded-full bg-white/20 backdrop-blur-md 
+         w-12 h-12 flex items-center justify-center text-2xl text-white 
+         border border-white/30 hover:bg-white/30 transition-all;
+}
+
+/* Hero carousel scrim for text readability */
+.hero-scrim {
+  background: linear-gradient(180deg, 
+    rgba(0,0,0,0.3) 0%, 
+    rgba(0,0,0,0.1) 40%,
+    rgba(0,0,0,0.1) 60%, 
+    rgba(0,0,0,0.4) 100%
+  );
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(14, 134, 157, 0.2);
+}
+
+/* Fade in on scroll animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-on-scroll {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  border: 3px solid rgba(14, 134, 157, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--color-eo-teal);
+  width: 40px;
+  height: 40px;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid var(--color-eo-teal);
+  outline-offset: 2px;
+}
+
+/* Responsive image containers */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+.image-container img {
+  transition: transform 0.3s ease;
+}
+
+.image-container:hover img {
+  transform: scale(1.05);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-eo-blue);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-eo-teal);
+}
+
+/* Pill button style */
+.btn-pill {
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    var(--color-eo-blue) 50%, 
+    transparent 100%
+  );
+  margin: 3rem auto;
+  max-width: 200px;
+}
+
