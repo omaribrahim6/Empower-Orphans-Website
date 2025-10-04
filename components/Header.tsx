@@ -10,6 +10,11 @@ import NavLink from "./NavLink";
 export default function Header() {
   const pathname = usePathname();
   
+  // Don't render header on admin routes
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+  
   // Pages with light backgrounds at top need dark header from the start
   const lightBackgroundPages = ["/about", "/donate", "/chapters"];
   const needsDarkHeader = lightBackgroundPages.includes(pathname);
@@ -49,7 +54,7 @@ export default function Header() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        isScrolled || isMobileMenuOpen
           ? "bg-white/90 backdrop-blur-md shadow-lg"
           : "bg-transparent"
       }`}
@@ -60,7 +65,7 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2 group" aria-label="Empower Orphans home">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Image
-                src={isScrolled ? "/logolarge.svg" : "/logolargelight.svg"}
+                src={isScrolled || isMobileMenuOpen ? "/logolarge.svg" : "/logolargelight.svg"}
                 alt="Empower Orphans"
                 width={220}
                 height={44}
@@ -107,7 +112,7 @@ export default function Header() {
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             <svg
-              className={`w-6 h-6 ${isScrolled ? "text-eo-dark" : "text-white"}`}
+              className={`w-6 h-6 ${isScrolled || isMobileMenuOpen ? "text-eo-dark" : "text-white"}`}
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
