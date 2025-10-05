@@ -226,7 +226,7 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
 
             {/* Progress Bar */}
             <div className="relative mb-8">
-              <div className="h-6 overflow-hidden rounded-full bg-eo-blue/15 relative">
+              <div className="h-5 md:h-6 overflow-hidden rounded-full bg-eo-blue/15 relative">
                 <motion.div
                   initial={{ width: 0 }}
                   whileInView={{ width: `${pct}%` }}

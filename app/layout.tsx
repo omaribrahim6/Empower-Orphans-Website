@@ -21,17 +21,31 @@ export const metadata: Metadata = {
   description: "Student-led chapters at Carleton and uOttawa fundraising and volunteering to support orphaned and vulnerable children. Join us to make a difference.",
   keywords: ["empower orphans", "student nonprofit", "charity", "ottawa", "carleton", "uottawa", "orphans", "volunteer", "donate"],
   authors: [{ name: "Empower Orphans" }],
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: { url: "/apple-icon.png", type: "image/png" },
+  },
   openGraph: {
     title: "Empower Orphans",
     description: "Student-led nonprofit supporting orphaned children through fundraising and volunteering",
     type: "website",
     locale: "en_CA",
     siteName: "Empower Orphans",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        alt: "Empower Orphans - Supporting orphaned children",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Empower Orphans",
     description: "Student-led nonprofit supporting orphaned children",
+    images: ["/opengraph-image.png"],
   },
   robots: {
     index: true,
