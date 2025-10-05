@@ -8,9 +8,10 @@ interface ModalProps {
   title: string
   children: React.ReactNode
   footer?: React.ReactNode
+  size?: 'default' | 'large'
 }
 
-export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) {
+export function Modal({ isOpen, onClose, title, children, footer, size = 'default' }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -75,7 +76,9 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden animate-scale-in"
+        className={`relative bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-hidden animate-scale-in ${
+          size === 'large' ? 'max-w-7xl' : 'max-w-lg'
+        }`}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-eo-teal to-eo-blue px-6 py-4 flex items-center justify-between">

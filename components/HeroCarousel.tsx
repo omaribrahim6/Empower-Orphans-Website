@@ -124,6 +124,9 @@ export default function HeroCarousel({ images }: Props) {
             src={images[idx].url}
             alt={images[idx].alt || "Hero slide"}
             className="h-full w-full object-cover"
+            style={{
+              objectPosition: `center ${images[idx].position ?? 50}%`
+            }}
             loading="eager"
           />
         </motion.div>

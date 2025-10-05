@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient, getUser, isAdmin } from '@/lib/supabase-server'
+import { isRateLimited } from '@/lib/rate-limit'
 
 type ActionResult<T = void> = {
   success: boolean
@@ -27,9 +28,15 @@ async function verifyAdmin(): Promise<{ isAdmin: boolean; userId: string | null 
  */
 export async function uploadCarouselImage(formData: FormData): Promise<ActionResult<{ path: string }>> {
   try {
-    const { isAdmin: userIsAdmin } = await verifyAdmin()
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
     if (!userIsAdmin) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check for uploads
+    const rateLimitCheck = await isRateLimited('upload', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
     }
 
     const file = formData.get('file') as File
@@ -50,8 +57,15 @@ export async function uploadCarouselImage(formData: FormData): Promise<ActionRes
 
     const supabase = await createClient()
 
-    // Generate unique filename
-    const ext = file.name.split('.').pop()
+    // SECURITY: Sanitize file extension to prevent path traversal
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+    const ext = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+    
+    // Validate extension is in allowed list
+    if (!allowedExtensions.includes(ext)) {
+      return { success: false, error: 'Invalid file type. Allowed: jpg, jpeg, png, gif, webp' }
+    }
+
     const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
     const path = `carousel/${uniqueName}`
 
@@ -83,12 +97,17 @@ export async function uploadCarouselImage(formData: FormData): Promise<ActionRes
 
     const nextOrder = (maxData?.order ?? -1) + 1
 
+    // Get position from formData if provided
+    const position = formData.get('position')
+    const positionValue = position ? parseInt(position as string, 10) : 50
+
     // Add to hero_slides table
     const { error: dbError } = await supabase
       .from('hero_slides')
       .insert({
         url: urlData.publicUrl,
         order: nextOrder,
+        position: positionValue,
       })
 
     if (dbError) {
@@ -113,9 +132,15 @@ export async function uploadCarouselImage(formData: FormData): Promise<ActionRes
  */
 export async function deleteCarouselImage(id: string, url: string): Promise<ActionResult> {
   try {
-    const { isAdmin: userIsAdmin } = await verifyAdmin()
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
     if (!userIsAdmin) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('write', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
     }
 
     const supabase = await createClient()
@@ -159,9 +184,15 @@ export async function deleteCarouselImage(id: string, url: string): Promise<Acti
  */
 export async function reorderCarouselImages(order: { id: string; order: number }[]): Promise<ActionResult> {
   try {
-    const { isAdmin: userIsAdmin } = await verifyAdmin()
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
     if (!userIsAdmin) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('write', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
     }
 
     const supabase = await createClient()
@@ -188,9 +219,22 @@ export async function reorderCarouselImages(order: { id: string; order: number }
 
 /**
  * Get all carousel images
+ * SECURITY: Requires admin authentication
  */
 export async function getCarouselImages(): Promise<ActionResult<any[]>> {
   try {
+    // SECURITY: Verify admin access
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
+    if (!userIsAdmin) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('read', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
+    }
+
     const supabase = await createClient()
 
     const { data, error } = await supabase

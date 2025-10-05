@@ -358,6 +358,13 @@ interface EventFormProps {
 function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(event?.image_url || null)
+  
+  // Live preview states
+  const [previewTitle, setPreviewTitle] = useState(event?.title || 'Enter event title')
+  const [previewDate, setPreviewDate] = useState(event?.date || new Date().toISOString())
+  const [previewLocation, setPreviewLocation] = useState(event?.location || '')
+  const [previewDescription, setPreviewDescription] = useState(event?.description || '')
+  const [previewChapter, setPreviewChapter] = useState(event?.chapter || '')
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -388,6 +395,7 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
       isOpen={true}
       onClose={onClose}
       title={mode === 'create' ? 'Create Event' : 'Edit Event'}
+      size="large"
       footer={
         <>
           <button
@@ -413,7 +421,9 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
         </>
       }
     >
-      <form ref={formRef} id="event-form" onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Form Section */}
+        <form ref={formRef} id="event-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Title */}
         <div>
           <label htmlFor="title" className="block text-sm font-brand font-semibold text-eo-dark mb-1">
@@ -425,6 +435,7 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
             name="title"
             required
             defaultValue={event?.title || ''}
+            onChange={(e) => setPreviewTitle(e.target.value || 'Enter event title')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg font-sub
                      focus:outline-none focus:ring-2 focus:ring-eo-teal focus:border-transparent"
           />
@@ -441,6 +452,7 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
             name="date"
             required
             defaultValue={defaultDateTime}
+            onChange={(e) => setPreviewDate(e.target.value ? new Date(e.target.value).toISOString() : new Date().toISOString())}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg font-sub
                      focus:outline-none focus:ring-2 focus:ring-eo-teal focus:border-transparent"
           />
@@ -456,6 +468,7 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
             id="location"
             name="location"
             defaultValue={event?.location || ''}
+            onChange={(e) => setPreviewLocation(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg font-sub
                      focus:outline-none focus:ring-2 focus:ring-eo-teal focus:border-transparent"
           />
@@ -470,6 +483,7 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
             id="chapter"
             name="chapter"
             defaultValue={event?.chapter || ''}
+            onChange={(e) => setPreviewChapter(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg font-sub
                      focus:outline-none focus:ring-2 focus:ring-eo-teal focus:border-transparent"
           >
@@ -490,6 +504,7 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
             name="description"
             rows={4}
             defaultValue={event?.description || ''}
+            onChange={(e) => setPreviewDescription(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg font-sub
                      focus:outline-none focus:ring-2 focus:ring-eo-teal focus:border-transparent resize-none"
           />
@@ -528,16 +543,94 @@ function EventForm({ mode, event, onSubmit, onClose, submitting }: EventFormProp
                      file:bg-eo-bg file:text-eo-dark file:font-sub file:font-medium
                      hover:file:bg-eo-sky/50 file:cursor-pointer"
           />
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="mt-3 w-full h-48 object-cover rounded-lg"
-            />
-          )}
           <p className="text-xs text-gray-500 mt-1">Max 25MB, images only</p>
         </div>
       </form>
+
+        {/* Live Preview Section */}
+        <div className="lg:sticky lg:top-4 h-fit">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-2 h-2 rounded-full bg-eo-teal animate-pulse"></div>
+            <h3 className="text-lg font-brand font-bold text-eo-dark">Live Preview</h3>
+          </div>
+          
+          {/* Preview Card - Matches actual event card styling */}
+          <div className="rounded-3xl border border-eo-blue/20 bg-white overflow-hidden shadow-lg max-w-sm mx-auto">
+            {imagePreview ? (
+              <div className="relative h-48 bg-gradient-to-br from-eo-bg to-eo-sky overflow-hidden">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="relative h-48 bg-gradient-to-br from-eo-bg to-eo-sky flex items-center justify-center">
+                <svg
+                  className="w-16 h-16 text-eo-dark/30"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            )}
+
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
+                <span className="px-3 py-1 bg-eo-teal/10 text-eo-teal text-xs font-semibold rounded-full">
+                  {new Date(previewDate).toLocaleDateString('en-CA', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </span>
+                {previewChapter && (
+                  <span className="px-3 py-1 bg-eo-blue/10 text-eo-blue text-xs font-semibold rounded-full capitalize">
+                    {previewChapter}
+                  </span>
+                )}
+              </div>
+
+              <h3 className="font-brand text-2xl font-bold text-eo-dark mb-3">
+                {previewTitle}
+              </h3>
+
+              {previewDescription && (
+                <p className="text-eo-dark/70 leading-relaxed mb-4">
+                  {previewDescription}
+                </p>
+              )}
+
+              {previewLocation && (
+                <div className="flex items-center gap-2 text-sm text-eo-dark/60">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  {previewLocation}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </Modal>
   )
 }

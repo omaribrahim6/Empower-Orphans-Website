@@ -37,6 +37,7 @@ export type HeroImage = {
   url: string
   alt?: string
   order?: number
+  position?: number // Vertical position percentage (0-100) for object-position
 }
 
 // Server-side function to fetch events

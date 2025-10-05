@@ -76,7 +76,7 @@ export default function DonateSection({ variant = "full" }: DonateSectionProps) 
               <div className="rounded-3xl border border-eo-blue/20 bg-white/80 backdrop-blur-sm p-8 shadow-xl">
                 <div className="flex items-end justify-between gap-6 mb-6">
                   <div>
-                    <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far</p>
+                    <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far (Placeholder)</p>
                     <motion.p
                       initial={{ scale: 0.8, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
@@ -204,7 +204,7 @@ export default function DonateSection({ variant = "full" }: DonateSectionProps) 
             
             <div className="flex items-end justify-between gap-6 mb-6">
               <div>
-                <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far</p>
+                <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far (Placeholder)</p>
                 <motion.p
                   initial={{ scale: 0.8, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}

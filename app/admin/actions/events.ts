@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient, getUser, isAdmin } from '@/lib/supabase-server'
+import { isRateLimited } from '@/lib/rate-limit'
 
 type ActionResult<T = void> = {
   success: boolean
@@ -47,8 +48,15 @@ async function uploadEventImage(file: File): Promise<{ path: string } | null> {
 
   const supabase = await createClient()
 
-  // Generate unique filename
-  const ext = file.name.split('.').pop()
+  // SECURITY: Sanitize file extension to prevent path traversal
+  const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+  const ext = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+  
+  // Validate extension is in allowed list
+  if (!allowedExtensions.includes(ext)) {
+    throw new Error('Invalid file type. Allowed: jpg, jpeg, png, gif, webp')
+  }
+
   const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`
   const path = `events/${uniqueName}`
 
@@ -88,6 +96,12 @@ export async function createEvent(formData: FormData): Promise<ActionResult<any>
     const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
     if (!userIsAdmin || !userId) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('write', userId)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
     }
 
     // Extract form data
@@ -165,9 +179,15 @@ export async function createEvent(formData: FormData): Promise<ActionResult<any>
  */
 export async function updateEvent(id: string, formData: FormData): Promise<ActionResult<any>> {
   try {
-    const { isAdmin: userIsAdmin } = await verifyAdmin()
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
     if (!userIsAdmin) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('write', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
     }
 
     const supabase = await createClient()
@@ -256,9 +276,15 @@ export async function updateEvent(id: string, formData: FormData): Promise<Actio
  */
 export async function deleteEvent(id: string): Promise<ActionResult> {
   try {
-    const { isAdmin: userIsAdmin } = await verifyAdmin()
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
     if (!userIsAdmin) {
       return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('write', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
     }
 
     const supabase = await createClient()
@@ -306,9 +332,22 @@ export async function deleteEvent(id: string): Promise<ActionResult> {
 
 /**
  * Get all events (for admin panel)
+ * SECURITY: Requires admin authentication
  */
 export async function getEvents(): Promise<ActionResult<any[]>> {
   try {
+    // SECURITY: Verify admin access
+    const { isAdmin: userIsAdmin, userId } = await verifyAdmin()
+    if (!userIsAdmin) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    // SECURITY: Rate limit check
+    const rateLimitCheck = await isRateLimited('read', userId || undefined)
+    if (rateLimitCheck.limited) {
+      return { success: false, error: rateLimitCheck.message || 'Rate limit exceeded' }
+    }
+
     const supabase = await createClient()
 
     const { data, error } = await supabase

@@ -84,10 +84,25 @@ efinal/
 
 ## 🔒 Security
 
-- All sensitive keys are stored in `.env` files (never committed)
-- Supabase queries use server-side rendering where possible
-- User input is sanitized in forms
-- HttpOnly and Secure cookies for future authentication
+**⚠️ IMPORTANT: Read [SECURITY.md](./SECURITY.md) for comprehensive security documentation.**
+
+### Quick Summary:
+- ✅ **Row Level Security (RLS)**: Database-level authorization on all tables
+- ✅ **Server Action Protection**: Authorization + rate limiting on all CRUD operations
+- ✅ **Path Traversal Prevention**: Sanitized file uploads with whitelist validation
+- ✅ **Rate Limiting**: 30 writes, 100 reads, 10 uploads per 10 minutes
+- ✅ **Restricted Image Loading**: Only `*.supabase.co` domains allowed
+- ✅ **Security Headers**: CSP, HSTS, X-Frame-Options, etc.
+- ✅ **Audit Logging**: Optional immutable audit trail for compliance
+- ✅ **Login Rate Limiting**: 5 attempts per IP per 10 minutes
+- ✅ **Session Management**: JWT tokens with automatic refresh
+- ✅ **Input Validation**: Client-side and server-side validation
+
+### Critical Files:
+- `migrations/001_security_rls_policies.sql` - Database security policies
+- `lib/rate-limit.ts` - Server action rate limiting
+- `middleware.ts` - Route protection
+- `app/admin/actions/*.ts` - Protected server actions
 
 ## 🌐 Pages
 
@@ -107,13 +122,16 @@ A production-ready admin dashboard for managing carousel images and events. Feat
 ### Features
 
 #### Authentication & Security
-- **Login Protection**: Email/password authentication via Supabase Auth
-- **Rate Limiting**: Maximum 5 login attempts per IP per 10 minutes
+- **Login Protection**: Email/password authentication via Supabase Auth with rate limiting
+- **Multi-Layer Authorization**: Middleware + server actions + RLS policies
 - **Route Protection**: Middleware guards all `/admin/*` routes
 - **Role-Based Access**: Only users in the `admins` table can access the dashboard
 - **Security Through Ambiguity**: Non-admin users receive 404 (not 403) for stealth
-- **No Service Keys Exposed**: Uses anon key on client; server actions for sensitive operations
-- **Strong RLS**: Row Level Security policies enforce admin-only writes
+- **Server Action Rate Limiting**: Prevents abuse of CRUD operations (30/100/10 per 10min)
+- **Strong RLS**: Database-level security policies enforce admin-only writes
+- **File Upload Security**: Path traversal prevention and extension whitelist
+- **Audit Trail**: Optional immutable logging of all admin actions
+- **🔒 See [SECURITY.md](./SECURITY.md) for complete security documentation**
 
 #### Carousel Manager
 - **Drag-and-Drop Upload**: Upload images with native HTML5 drag-and-drop
@@ -206,16 +224,18 @@ media/
 
 ### Setup Instructions
 
+⚠️ **SECURITY CRITICAL:** Follow these steps carefully to ensure proper security configuration.
+
 #### 1. Run Database Migrations
 
-Execute the SQL migration to create tables, RLS policies, and storage policies:
+Execute the SQL migration to create tables, RLS policies, storage policies, and rate limiting:
 
 ```bash
 # Using Supabase CLI
-supabase db push --file migrations/001_admin_area.sql
+supabase db push --file migrations/001_security_rls_policies.sql
 
 # Or via Supabase Dashboard SQL Editor
-# Copy and paste the contents of migrations/001_admin_area.sql
+# Copy and paste the contents of migrations/001_security_rls_policies.sql
 ```
 
 #### 2. Create Your First Admin
@@ -260,14 +280,35 @@ The admin area requires the `@supabase/ssr` package for server-side auth:
 npm install @supabase/ssr
 ```
 
-#### 5. Deploy
+#### 5. Verify Security Setup
+
+**Run these queries in Supabase SQL Editor to verify RLS is working:**
+
+```sql
+-- 1. Verify RLS is enabled
+SELECT tablename, rowsecurity 
+FROM pg_tables 
+WHERE schemaname = 'public';
+-- All tables should show 't' (true)
+
+-- 2. Test as non-admin (should fail)
+SET ROLE TO anon;
+INSERT INTO public.events (title, date) VALUES ('Test', now());
+-- Should get: "new row violates row-level security policy"
+RESET ROLE;
+```
+
+#### 6. Deploy
 
 When deploying to Vercel/production:
 
-1. Set environment variables in your hosting platform
-2. Run migrations on production database
-3. Create admin users in production
-4. Test login and rate limiting
+1. ✅ Set environment variables in your hosting platform
+2. ✅ Run migrations on production database
+3. ✅ Verify RLS policies are active (see step 5)
+4. ✅ Create admin users in production
+5. ✅ Test login and rate limiting
+6. ✅ Test non-admin user access (should get 404)
+7. ✅ Review [SECURITY.md](./SECURITY.md) checklist
 
 ### Usage Guide
 
@@ -300,13 +341,20 @@ Click "Sign Out" in the top-right user menu.
 
 ### Security Considerations
 
-1. **Admin Invitations**: Only existing admins can invite new admins (via RLS policy)
-2. **IP-Based Rate Limiting**: Uses SHA-256 hashed IPs for privacy
-3. **Server Actions**: All mutations go through server actions with admin verification
-4. **Storage Policies**: Enforce admin-only writes; public reads for served images
-5. **Middleware**: Blocks unauthenticated access before reaching page components
-6. **404 for Non-Admins**: Security through ambiguity prevents discovery
-7. **Excluded from SEO**: `robots.txt` disallows `/admin/*`
+**📖 Full documentation:** [SECURITY.md](./SECURITY.md)
+
+1. **Multi-Layer Defense**: Middleware + server actions + RLS policies + rate limiting
+2. **Admin Invitations**: Only existing admins can invite new admins (via RLS policy)
+3. **Rate Limiting**: IP-based (login) + user-based (server actions) with SHA-256 hashing
+4. **Server Actions**: All operations have authorization checks and rate limits
+5. **Storage Policies**: Enforce admin-only writes; public reads for served images
+6. **Path Traversal Prevention**: Sanitized file uploads with extension whitelist
+7. **Image Loading Restrictions**: Only `*.supabase.co` domains allowed
+8. **404 for Non-Admins**: Security through ambiguity prevents discovery
+9. **Audit Trail**: Optional immutable logging for compliance
+10. **Excluded from SEO**: `robots.txt` disallows `/admin/*`
+
+**🚨 Security Checklist:** See [SECURITY.md](./SECURITY.md#-security-checklist-for-deployment)
 
 ### Troubleshooting
 

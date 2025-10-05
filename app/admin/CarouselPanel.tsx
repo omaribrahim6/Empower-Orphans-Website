@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useToast, ToastContainer } from '@/components/admin/Toast'
-import { ConfirmModal } from '@/components/admin/Modal'
+import { Modal, ConfirmModal } from '@/components/admin/Modal'
 import {
   uploadCarouselImage,
   deleteCarouselImage,
@@ -28,6 +28,13 @@ export default function CarouselPanel() {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { toasts, addToast, dismissToast } = useToast()
+  
+  // Image preview and positioning
+  const [previewModalOpen, setPreviewModalOpen] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [imagePosition, setImagePosition] = useState(50) // Vertical position percentage (0-100)
+  const [imageLoadError, setImageLoadError] = useState(false)
 
   // Load images on mount
   useEffect(() => {
@@ -61,10 +68,34 @@ export default function CarouselPanel() {
       return
     }
 
+    // Use FileReader to create base64 preview (more reliable than blob URLs)
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const url = e.target?.result as string
+      console.log('Created preview from FileReader')
+      console.log('File details:', { name: file.name, type: file.type, size: file.size })
+      setPreviewUrl(url)
+      setSelectedFile(file)
+      setImagePosition(50) // Reset to center
+      setImageLoadError(false) // Reset error state
+      setPreviewModalOpen(true)
+    }
+    reader.onerror = () => {
+      console.error('FileReader error')
+      addToast('Failed to read image file', 'error')
+    }
+    reader.readAsDataURL(file)
+  }
+
+  async function handleUploadConfirm() {
+    if (!selectedFile) return
+
     setUploading(true)
+    setPreviewModalOpen(false)
 
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('file', selectedFile)
+    formData.append('position', imagePosition.toString())
 
     const result = await uploadCarouselImage(formData)
 
@@ -77,6 +108,21 @@ export default function CarouselPanel() {
 
     setUploading(false)
 
+    // Cleanup
+    setPreviewUrl(null)
+    setSelectedFile(null)
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  function handlePreviewClose() {
+    setPreviewUrl(null)
+    setSelectedFile(null)
+    setPreviewModalOpen(false)
+    
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -309,6 +355,124 @@ export default function CarouselPanel() {
           </div>
         )}
       </div>
+
+      {/* Image Preview & Crop Modal */}
+      {previewModalOpen && previewUrl && (
+        <Modal
+          isOpen={previewModalOpen}
+          onClose={handlePreviewClose}
+          title="Preview & Position Carousel Image"
+          size="large"
+          footer={
+            <>
+              <button
+                type="button"
+                onClick={handlePreviewClose}
+                className="px-4 py-2 font-sub font-medium text-gray-700 bg-white border border-gray-300 rounded-lg
+                         hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500
+                         transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUploadConfirm}
+                disabled={uploading}
+                className="px-4 py-2 font-sub font-medium text-white bg-eo-teal rounded-lg
+                         hover:bg-eo-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-eo-sky
+                         disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {uploading ? 'Uploading...' : 'Upload Image'}
+              </button>
+            </>
+          }
+        >
+          <div className="space-y-6">
+            {/* Instructions */}
+            <div className="bg-eo-bg/30 border border-eo-teal/20 rounded-lg p-4">
+              <p className="text-sm font-sub text-eo-dark">
+                <span className="font-semibold">Preview how your image will appear in the hero carousel.</span>
+                {' '}Use the slider below to adjust the vertical position if your image is cropped.
+              </p>
+            </div>
+
+            {/* Preview Container */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-brand font-bold text-eo-dark">Carousel Preview</h3>
+              
+              {/* Carousel Size Preview */}
+              <div 
+                className="relative w-full rounded-xl overflow-hidden border-2 border-eo-teal/30 bg-gray-900"
+                style={{ height: '60vh' }}
+              >
+                {imageLoadError ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-red-50 text-red-600 p-6">
+                    <svg className="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p className="font-sub font-semibold">Failed to load image</p>
+                    <p className="text-sm mt-2">URL: {previewUrl}</p>
+                  </div>
+                ) : (
+                  <img
+                    src={previewUrl || ''}
+                    alt="Carousel Preview"
+                    className="absolute top-0 left-0 w-full h-full object-cover"
+                    style={{ 
+                      objectPosition: `center ${imagePosition}%`
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Image loaded successfully!')
+                      setImageLoadError(false)
+                    }}
+                    onError={(e) => {
+                      console.error('❌ Image failed to load:', previewUrl)
+                      console.error('Error event:', e)
+                      setImageLoadError(true)
+                    }}
+                  />
+                )}
+                {/* Overlay to show it's a preview */}
+                {!imageLoadError && (
+                  <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-full z-10">
+                    <span className="text-white text-sm font-sub font-semibold">Live Preview</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Position Control */}
+              <div className="space-y-3">
+                <label className="block">
+                  <span className="text-sm font-brand font-semibold text-eo-dark mb-2 block">
+                    Vertical Position: {imagePosition}%
+                  </span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs text-gray-500 font-sub">Top</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={imagePosition}
+                      onChange={(e) => setImagePosition(Number(e.target.value))}
+                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer
+                               [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 
+                               [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full 
+                               [&::-webkit-slider-thumb]:bg-eo-teal [&::-webkit-slider-thumb]:cursor-pointer
+                               [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 
+                               [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-eo-teal 
+                               [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                    />
+                    <span className="text-xs text-gray-500 font-sub">Bottom</span>
+                  </div>
+                </label>
+                <p className="text-xs text-gray-500 font-sub">
+                  Drag the slider to adjust which part of the image is visible in the carousel.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       {/* Delete Confirmation Modal */}
       <ConfirmModal
