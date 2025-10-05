@@ -40,6 +40,26 @@ export default function Button({
   }`;
 
   if (href && !disabled) {
+    // Check if the href is an external link (Instagram, WhatsApp, Google Forms, or any full URL)
+    const isExternal = href.startsWith('http://') || 
+                       href.startsWith('https://') || 
+                       href.includes('instagram.com') ||
+                       href.includes('chat.whatsapp.com') ||
+                       href.includes('docs.google.com/forms');
+    
+    if (isExternal) {
+      return (
+        <a 
+          href={href} 
+          className={styles}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children}
+        </a>
+      );
+    }
+    
     return (
       <Link href={href} className={styles}>
         {children}

@@ -28,7 +28,7 @@ export default function ChaptersSection({ variant = "full" }: ChaptersSectionPro
 
   if (variant === "teaser") {
     return (
-      <section className="py-20 bg-gradient-to-br from-eo-bg/30 via-white to-eo-sky/20">
+      <section id="join" className="py-20 bg-gradient-to-br from-eo-bg/30 via-white to-eo-sky/20">
         <div className="mx-auto max-w-7xl px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

@@ -6,15 +6,16 @@ import Button from "../Button";
 
 interface DonateSectionProps {
   variant?: "teaser" | "full";
+  currentAmount?: number; // Amount raised so far (from database)
 }
 
-export default function DonateSection({ variant = "full" }: DonateSectionProps) {
-  // Get current donations from env or use placeholder
-  const envCurrent = process.env.NEXT_PUBLIC_CURRENT_DONATIONS 
+export default function DonateSection({ variant = "full", currentAmount }: DonateSectionProps) {
+  // Use currentAmount from props (database), fallback to env, then placeholder
+  const defaultCurrent = process.env.NEXT_PUBLIC_CURRENT_DONATIONS 
     ? Number(process.env.NEXT_PUBLIC_CURRENT_DONATIONS) 
     : DONATIONS.placeholderCurrent;
   
-  const current = Math.max(0, Math.min(envCurrent, SITE.goalThisYear));
+  const current = Math.max(0, Math.min(currentAmount ?? defaultCurrent, SITE.goalThisYear));
   const goal = SITE.goalThisYear;
   const pct = Math.max(0, Math.min(100, (current / goal) * 100));
   const remaining = Math.max(0, goal - current);
@@ -29,7 +30,7 @@ export default function DonateSection({ variant = "full" }: DonateSectionProps) 
 
   if (variant === "teaser") {
     return (
-      <section className="py-20 bg-gradient-to-br from-eo-bg/20 via-white to-eo-sky/10">
+      <section id="donate" className="py-20 bg-gradient-to-br from-eo-bg/20 via-white to-eo-sky/10">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-5">
             {/* Left: Copy + CTA */}

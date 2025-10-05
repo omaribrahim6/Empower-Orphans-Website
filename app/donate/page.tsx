@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import DonateSection from "@/components/sections/DonateSection";
 import Footer from "@/components/Footer";
+import { getPublicDonationProgress } from "@/app/admin/actions/donation";
 
 export const metadata: Metadata = {
   title: "Donate | Empower Orphans",
@@ -12,11 +13,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function DonatePage() {
+export default async function DonatePage() {
+  // Fetch current donation progress from database
+  const donationAmount = await getPublicDonationProgress();
+
   return (
     <>
       <main className="pt-24">
-        <DonateSection variant="full" />
+        <DonateSection variant="full" currentAmount={donationAmount} />
       </main>
       <Footer />
     </>

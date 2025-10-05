@@ -61,10 +61,10 @@ export default function HeroCarousel({ images }: Props) {
             transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             className="mt-8 flex flex-wrap items-center justify-center gap-4"
           >
-            <Button href="/#donate" variant="primary" size="lg">
+            <Button href="/donate" variant="primary" size="lg">
               Donate Now
             </Button>
-            <Button href="/#join" variant="outline" size="lg">
+            <Button href="/chapters" variant="outline" size="lg">
               Join a Chapter
             </Button>
           </motion.div>
@@ -164,10 +164,10 @@ export default function HeroCarousel({ images }: Props) {
             transition={{ duration: 0.8, delay: 0.9 }}
             className="mt-8 flex flex-wrap items-center justify-center gap-4"
           >
-            <Button href="/#donate" variant="primary" size="lg">
+            <Button href="/donate" variant="primary" size="lg">
               Donate Now
             </Button>
-            <Button href="/#join" variant="outline" size="lg">
+            <Button href="/chapters" variant="outline" size="lg">
               Join a Chapter
             </Button>
           </motion.div>
