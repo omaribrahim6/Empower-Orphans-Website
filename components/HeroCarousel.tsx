@@ -8,6 +8,7 @@ type HeroImage = {
   id: string;
   url: string;
   alt?: string;
+  position?: number;
 };
 
 type Props = {

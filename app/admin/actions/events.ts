@@ -124,6 +124,9 @@ export async function createEvent(formData: FormData): Promise<ActionResult<any>
     if (file && file.size > 0) {
       try {
         const result = await uploadEventImage(file)
+        if (!result) {
+          return { success: false, error: 'Failed to upload image' }
+        }
         const supabase = await createClient()
         const { data: urlData } = supabase.storage
           .from('media')
@@ -222,6 +225,9 @@ export async function updateEvent(id: string, formData: FormData): Promise<Actio
     if (file && file.size > 0) {
       try {
         const result = await uploadEventImage(file)
+        if (!result) {
+          return { success: false, error: 'Failed to upload image' }
+        }
         const { data: urlData } = supabase.storage
           .from('media')
           .getPublicUrl(result.path)
