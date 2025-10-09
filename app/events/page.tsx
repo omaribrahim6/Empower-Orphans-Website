@@ -8,6 +8,10 @@ export const metadata: Metadata = {
   description: "Discover our upcoming and past events - from fundraising campaigns to volunteer drives.",
 };
 
+// Force dynamic rendering to always fetch fresh events from Supabase
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function EventsPage() {
   // Fetch events server-side for better SEO and performance
   const events = await getEvents();

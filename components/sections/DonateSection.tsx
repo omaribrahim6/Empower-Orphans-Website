@@ -275,7 +275,7 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
                 className="rounded-xl bg-gradient-to-br from-eo-sky/10 to-eo-blue/10 p-6 text-center"
               >
                 <p className="text-sm text-eo-dark/60 font-medium mb-2">Remaining</p>
-                <p className="text-4xl font-bold text-eo-dark font-brand">
+                <p className="text-2xl md:text-3xl font-bold text-eo-dark font-brand">
                   {formatCurrency(remaining)}
                 </p>
               </motion.div>
