@@ -1,11 +1,14 @@
+import dynamic from "next/dynamic";
 import HeroCarousel from "@/components/HeroCarousel";
-import AboutSection from "@/components/sections/AboutSection";
-import DonateSection from "@/components/sections/DonateSection";
-import ChaptersSection from "@/components/sections/ChaptersSection";
-import Contact from "@/components/Contact";
-import Footer from "@/components/Footer";
 import { getHeroImages } from "@/lib/supabase";
 import { getPublicDonationProgress } from "@/app/admin/actions/donation";
+
+// Dynamically import heavy components to split the bundle
+const AboutSection = dynamic(() => import("@/components/sections/AboutSection"));
+const DonateSection = dynamic(() => import("@/components/sections/DonateSection"));
+const ChaptersSection = dynamic(() => import("@/components/sections/ChaptersSection"));
+const Contact = dynamic(() => import("@/components/Contact"));
+const Footer = dynamic(() => import("@/components/Footer"));
 
 export default async function HomePage() {
   // Fetch hero images and donation progress server-side for better performance and SEO

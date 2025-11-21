@@ -40,12 +40,13 @@ export default function Button({
   }`;
 
   if (href && !disabled) {
-    // Check if the href is an external link (Instagram, WhatsApp, Google Forms, or any full URL)
+    // Check if the href is an external link (Instagram, WhatsApp, Google Forms, Square, or any full URL)
     const isExternal = href.startsWith('http://') || 
                        href.startsWith('https://') || 
                        href.includes('instagram.com') ||
                        href.includes('chat.whatsapp.com') ||
-                       href.includes('docs.google.com/forms');
+                       href.includes('docs.google.com/forms') ||
+                       href.includes('square.link');
     
     if (isExternal) {
       return (

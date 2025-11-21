@@ -77,7 +77,7 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
               <div className="rounded-3xl border border-eo-blue/20 bg-white/80 backdrop-blur-sm p-8 shadow-xl">
                 <div className="flex items-end justify-between gap-6 mb-6">
                   <div>
-                    <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far (Placeholder)</p>
+                    <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far</p>
                     <motion.p
                       initial={{ scale: 0.8, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
@@ -205,7 +205,7 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
             
             <div className="flex items-end justify-between gap-6 mb-6">
               <div>
-                <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far (Placeholder)</p>
+                <p className="text-sm text-eo-dark/60 font-medium mb-1">Raised So Far</p>
                 <motion.p
                   initial={{ scale: 0.8, opacity: 0 }}
                   whileInView={{ scale: 1, opacity: 1 }}
@@ -260,10 +260,10 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="rounded-xl bg-gradient-to-br from-eo-teal/10 to-eo-blue/10 p-6 text-center"
+                className="rounded-xl bg-gradient-to-br from-eo-teal/10 to-eo-blue/10 p-4 sm:p-6 text-center"
               >
-                <p className="text-sm text-eo-dark/60 font-medium mb-2">Progress</p>
-                <p className="text-4xl font-bold text-eo-teal font-brand">
+                <p className="text-xs sm:text-sm text-eo-dark/60 font-medium mb-2">Progress</p>
+                <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-eo-teal font-brand whitespace-nowrap">
                   {Math.floor(pct)}%
                 </p>
               </motion.div>
@@ -272,10 +272,10 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="rounded-xl bg-gradient-to-br from-eo-sky/10 to-eo-blue/10 p-6 text-center"
+                className="rounded-xl bg-gradient-to-br from-eo-sky/10 to-eo-blue/10 p-4 sm:p-6 text-center overflow-hidden"
               >
-                <p className="text-sm text-eo-dark/60 font-medium mb-2">Remaining</p>
-                <p className="text-2xl md:text-3xl font-bold text-eo-dark font-brand">
+                <p className="text-xs sm:text-sm text-eo-dark/60 font-medium mb-2">Remaining</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-eo-dark font-brand whitespace-nowrap">
                   {formatCurrency(remaining)}
                 </p>
               </motion.div>
@@ -292,9 +292,9 @@ export default function DonateSection({ variant = "full", currentAmount }: Donat
         {/* Impact Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {[
-            { amount: "$25", impact: "Provides a week of nutritious meals for one child" },
-            { amount: "$100", impact: "Covers school supplies and uniforms for a semester" },
-            { amount: "$500", impact: "Funds healthcare and medical care for a family" },
+            { amount: "$25", impact: "Helps provide meals and basic necessities for children in need" },
+            { amount: "$100", impact: "Supports educational programs and essential supplies" },
+            { amount: "$500", impact: "Makes a significant impact on multiple families" },
           ].map((item, index) => (
             <motion.div
               key={index}

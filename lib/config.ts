@@ -9,7 +9,7 @@ export const SITE = {
     joinCarleton: "https://docs.google.com/forms/d/e/1FAIpQLSeEgO_BY1vds5J51yA19EnWNdBLIuiZKJAQbyMAOz0AwOUwvQ/viewform",
     joinUOttawa: "https://docs.google.com/forms/d/e/1FAIpQLSe898L7wsIGTMgr8fWdsMKMxRQlAqDX-ApUkSGa0rU-dwAQAA/viewform",
     whatsapp: "https://chat.whatsapp.com/FPVhtMh3u1bDK6YXfUJ3eV",
-    donate: "/#donate",
+    donate: "https://square.link/u/1tmloi4n",
   },
   goalThisYear: 50000,
 } as const;
@@ -19,4 +19,3 @@ export const DONATIONS = {
   placeholderCurrent: 15000,
   envKey: "NEXT_PUBLIC_CURRENT_DONATIONS",
 } as const;
-
