@@ -88,6 +88,22 @@ section {
   );
 }
 
+/* Hero carousel image transition - subtle fade effect */
+.hero-image-transition {
+  animation: heroFadeIn 0.8s ease-out;
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+  }
+}
+
 /* Card hover effects */
 .card-hover {
   transition: all 0.3s ease;

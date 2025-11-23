@@ -18,13 +18,23 @@ type Props = {
 export default function HeroCarousel({ images }: Props) {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Helper function to handle smooth transitions
+  const transitionToIndex = (newIndex: number | ((prevIndex: number) => number)) => {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setIdx(newIndex);
+      setTimeout(() => setIsTransitioning(false), 50);
+    }, 300);
+  };
 
   useEffect(() => {
     if (paused || images.length <= 1) return;
     if (timer.current) clearInterval(timer.current);
     timer.current = setInterval(() => {
-      setIdx((i) => (i + 1) % images.length);
+      transitionToIndex((i) => (i + 1) % images.length);
     }, 7000);
     return () => {
       if (timer.current) clearInterval(timer.current);
@@ -74,7 +84,7 @@ export default function HeroCarousel({ images }: Props) {
       <div className="absolute inset-0 z-[1] hero-scrim pointer-events-none" />
 
       {/* Image Slides */}
-      <div className="absolute inset-0 hero-image-transition">
+      <div className={`absolute inset-0 transition-all duration-500 ${isTransitioning ? 'opacity-0 blur-sm' : 'opacity-100'}`}>
         <Image
           key={images[idx].id}
           src={images[idx].url}
@@ -84,7 +94,7 @@ export default function HeroCarousel({ images }: Props) {
           loading={idx === 0 ? "eager" : "lazy"}
           quality={80}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-          className="object-cover transition-opacity duration-1000"
+          className="object-cover"
           style={{
             objectPosition: `center ${images[idx].position ?? 50}%`
           }}
@@ -121,7 +131,7 @@ export default function HeroCarousel({ images }: Props) {
             <button
               className="rounded-full bg-white/20 backdrop-blur-md w-10 h-10 flex items-center justify-center text-xl text-white border border-white/30 hover:bg-white/30 transition-all flex-shrink-0"
               aria-label="Previous slide"
-              onClick={() => setIdx((i) => (i - 1 + images.length) % images.length)}
+              onClick={() => transitionToIndex((i) => (i - 1 + images.length) % images.length)}
             >
               ‹
             </button>
@@ -132,7 +142,7 @@ export default function HeroCarousel({ images }: Props) {
                 <button
                   key={i}
                   aria-label={`Go to slide ${i + 1}`}
-                  onClick={() => setIdx(i)}
+                  onClick={() => transitionToIndex(i)}
                   className={`h-3 w-3 rounded-full transition-all ${
                     i === idx
                       ? "bg-white shadow-lg w-8"
@@ -146,7 +156,7 @@ export default function HeroCarousel({ images }: Props) {
             <button
               className="rounded-full bg-white/20 backdrop-blur-md w-10 h-10 flex items-center justify-center text-xl text-white border border-white/30 hover:bg-white/30 transition-all flex-shrink-0"
               aria-label="Next slide"
-              onClick={() => setIdx((i) => (i + 1) % images.length)}
+              onClick={() => transitionToIndex((i) => (i + 1) % images.length)}
             >
               ›
             </button>
