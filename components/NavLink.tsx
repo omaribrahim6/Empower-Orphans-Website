@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, CSSProperties } from "react";
 
 interface NavLinkProps {
   href: string;
@@ -10,9 +10,10 @@ interface NavLinkProps {
   isScrolled: boolean;
   onClick?: () => void;
   className?: string;
+  style?: CSSProperties;
 }
 
-export default function NavLink({ href, label, isScrolled, onClick, className }: NavLinkProps) {
+export default function NavLink({ href, label, isScrolled, onClick, className, style }: NavLinkProps) {
   const pathname = usePathname();
   const [hash, setHash] = useState("");
 
@@ -55,6 +56,7 @@ export default function NavLink({ href, label, isScrolled, onClick, className }:
       href={href}
       onClick={onClick}
       className={className || `${baseClasses} ${colorClasses} ${hoverClasses} ${activeClasses}`}
+      style={style}
     >
       {label}
     </Link>

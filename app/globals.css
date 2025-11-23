@@ -130,18 +130,19 @@ section {
   animation: fadeInUp 0.6s ease-out;
 }
 
-/* Slide down animation for header */
+/* Slide down animation for header - Cyera style */
 @keyframes slideDown {
-  from {
+  0% {
     transform: translateY(-100%);
   }
-  to {
+  100% {
     transform: translateY(0);
   }
 }
 
+/* Animation plays once when class is added */
 .animate-slide-down {
-  animation: slideDown 0.6s ease-out;
+  animation: slideDown 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Slow pulse animation for background elements */
@@ -218,6 +219,51 @@ section {
   border-radius: 9999px;
   font-weight: 600;
   transition: all 0.2s ease;
+}
+
+/* Floating header pill container - Cyera style */
+.header-pill {
+  box-shadow: 0 18px 45px rgba(15, 83, 96, 0.2);
+  border: 1px solid rgba(15, 83, 96, 0.08);
+}
+
+.burger-line {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 9999px;
+  transition: transform 0.25s ease, opacity 0.25s ease, background-color 0.25s ease;
+}
+
+@keyframes mobileMenuDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mobile-menu-drop {
+  animation: mobileMenuDrop 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes mobileMenuItem {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-menu-item {
+  opacity: 0;
+  animation: mobileMenuItem 0.35s ease forwards;
 }
 
 /* Section divider */
