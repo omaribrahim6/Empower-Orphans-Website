@@ -134,10 +134,10 @@ export default function AboutSection({ variant = "full" }: AboutSectionProps) {
             </span>
           </div>
           <h1 className="font-brand text-5xl lg:text-6xl font-bold text-eo-dark leading-tight mb-6">
-            Empowering Students to Help Orphans
+            About Empower Orphans
           </h1>
           <p className="text-xl text-eo-dark/80 leading-relaxed max-w-4xl mx-auto">
-            Empower Orphans is a student-led nonprofit dedicated to mobilizing university chapters 
+            <strong>Empower Orphans</strong> is a student-led nonprofit dedicated to mobilizing university chapters 
             to raise funds, advocate, and volunteer—ensuring orphaned and vulnerable children 
             receive the food, education, and care they deserve.
           </p>

@@ -50,7 +50,8 @@ export default function HeroCarousel({ images }: Props) {
       >
         <div className="text-center px-6 max-w-4xl animate-fade-in">
           <h1 className="font-brand text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-lg">
-            Empowering orphans, led by students.
+            <span className="block">Empower Orphans</span>
+            <span className="block text-3xl md:text-4xl lg:text-5xl mt-2 font-medium text-white/95">Student-led. Impact-driven.</span>
           </h1>
           <p className="mt-6 text-xl text-white/95 leading-relaxed">
             Join our campus chapters raising funds and volunteering so orphaned children receive food, school, and care.
@@ -106,10 +107,11 @@ export default function HeroCarousel({ images }: Props) {
         <div className="max-w-4xl rounded-3xl backdrop-blur-lg bg-white/15 border border-white/20 
                      px-8 md:px-12 py-10 text-center shadow-2xl animate-fade-in">
           <h1 className="font-brand text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-lg">
-            Empowering orphans, led by students.
+            <span className="block">Empower Orphans</span>
+            <span className="block text-2xl md:text-3xl lg:text-4xl mt-2 font-medium text-white/95">Student-led. Impact-driven.</span>
           </h1>
           <p className="mt-5 text-lg md:text-xl text-white/95 leading-relaxed">
-            Join our campus chapters raising funds and volunteering so orphaned children receive food, school, and care.
+            University chapters raising funds and volunteering so orphaned children receive food, education, and care.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
             <Button href="/donate" variant="primary" size="lg">

@@ -4,8 +4,17 @@ import Footer from "@/components/Footer";
 import { getEvents } from "@/lib/supabase";
 
 export const metadata: Metadata = {
-  title: "Events & Programs | Empower Orphans",
-  description: "Discover our upcoming and past events - from fundraising campaigns to volunteer drives.",
+  title: "Events & Programs",
+  description: "Discover Empower Orphans upcoming and past events - fundraising campaigns, volunteer drives, and community initiatives to support orphaned children.",
+  keywords: ["Empower Orphans events", "charity events Ottawa", "volunteer opportunities", "fundraising campaigns", "student nonprofit events"],
+  openGraph: {
+    title: "Events & Programs | Empower Orphans",
+    description: "Join our fundraising campaigns, volunteer drives, and community events to support orphaned children.",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/events",
+  },
 };
 
 // Force dynamic rendering to always fetch fresh events from Supabase

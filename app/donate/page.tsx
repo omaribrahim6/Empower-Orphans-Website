@@ -4,12 +4,16 @@ import Footer from "@/components/Footer";
 import { getPublicDonationProgress } from "@/app/admin/actions/donation";
 
 export const metadata: Metadata = {
-  title: "Donate | Empower Orphans",
-  description: "Your donation directly supports food, education, healthcare, and shelter for orphaned children. Every dollar changes lives.",
+  title: "Donate",
+  description: "Donate to Empower Orphans - your contribution directly supports food, education, healthcare, and shelter for orphaned children worldwide. Every dollar changes lives.",
+  keywords: ["donate to orphans", "Empower Orphans donation", "charity donation", "support orphaned children", "help children in need"],
   openGraph: {
     title: "Donate | Empower Orphans",
-    description: "Support orphaned children through our student-led fundraising campaigns",
+    description: "Your donation directly supports orphaned children with food, education, healthcare, and shelter. Every dollar makes a difference.",
     type: "website",
+  },
+  alternates: {
+    canonical: "/donate",
   },
 };
 
