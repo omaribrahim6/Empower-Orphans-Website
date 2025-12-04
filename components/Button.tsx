@@ -4,7 +4,7 @@ type ButtonProps = {
   href?: string;
   onClick?: () => void;
   children: React.ReactNode;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "outline-hero";
   size?: "sm" | "md" | "lg";
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -27,6 +27,7 @@ export default function Button({
     primary: "bg-eo-teal text-white hover:brightness-110 btn-glow",
     secondary: "bg-eo-blue text-white hover:brightness-110",
     outline: "border-2 border-eo-teal text-eo-teal hover:bg-eo-teal hover:text-white",
+    "outline-hero": "border-2 border-white text-white bg-white/10 backdrop-blur-sm hover:bg-white hover:text-eo-teal shadow-lg",
   };
 
   const sizeStyles = {
